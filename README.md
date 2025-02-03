@@ -48,7 +48,7 @@ Below is an updated version of the comprehensive `README.md` that includes prope
 
 - **Rust:** Ensure you have [Rust installed](https://www.rust-lang.org/tools/install) to build from source.
 - **Conda:** Required for managing the QIIME2 environment. [Install Miniconda or Anaconda](https://docs.conda.io/en/latest/miniconda.html) if you haven’t already.
-- **QIIME2:** The pipeline depends on QIIME2 commands, which are executed within a Conda environment.
+- **QIIME2:** The pipeline depends on QIIME2 commands, which are executed within a Conda environment (windchime can install this for you).
 - **Internet Connection:** Needed to download database files and QIIME2 environment YAML files.
 
 ---
