@@ -264,7 +264,7 @@ This project is licensed under the [MIT License](LICENSE).
 
 For further questions or feedback, please reach out to:
 
-- **Author:** [Nikolas Yanek-Chrones]
-- **Email:** [research@icarai.io]
+- **Author:** Nikolas Yanek-Chrones
+- **Email:** research@icarai.io
 
 
