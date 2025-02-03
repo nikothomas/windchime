@@ -1,7 +1,3 @@
-Below is an updated version of the comprehensive `README.md` that includes proper attribution to the original pipelines:
-
----
-
 # Windchime
 
 **Windchime** is a Rust-based command-line interface (CLI) tool designed to simplify running a [QIIME2](https://qiime2.org/) amplicon sequencing pipeline for 16S/18S analysis. It provides integrated steps for environment setup, demultiplexing, database preparation, and executing a multi-step QIIME2 workflow—from importing files to generating merged output tables.
