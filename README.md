@@ -4,8 +4,6 @@
 
 > **Note:** This tool assumes that you have Conda installed and available in your system’s PATH, as it leverages Conda for installing QIIME2 environments and running QIIME2 commands.
 
----
-
 ## Table of Contents
 
 - [Features](#features)
@@ -26,8 +24,6 @@
 - [License](#license)
 - [Contact](#contact)
 
----
-
 ## Features
 
 - **Environment Management:** Installs and checks for an existing QIIME2 Conda environment.
@@ -38,16 +34,12 @@
 - **Target-Specific Support:** Supports both 16S and 18S target regions by adjusting adapter and primer sequences.
 - **Progress Reporting:** Uses a spinner progress bar by default (with an option for verbose output).
 
----
-
 ## Requirements
 
 - **Rust:** Ensure you have [Rust installed](https://www.rust-lang.org/tools/install) to build from source.
 - **Conda:** Required for managing the QIIME2 environment. [Install Miniconda or Anaconda](https://docs.conda.io/en/latest/miniconda.html) if you haven’t already.
 - **QIIME2:** The pipeline depends on QIIME2 commands, which are executed within a Conda environment (windchime can install this for you).
 - **Internet Connection:** Needed to download database files and QIIME2 environment YAML files.
-
----
 
 ## Installation
 
@@ -71,8 +63,6 @@
    ```bash
    cp target/release/windchime /usr/local/bin/
    ```
-
----
 
 ## Usage
 
@@ -105,8 +95,6 @@ windchime install-env [OPTIONS]
 windchime install-env --env-name qiime2-amplicon-2024.10
 ```
 
----
-
 #### 2. Demux
 
 Run demultiplexing using a barcodes file. This subcommand leverages the internal `demultiplex` module.
@@ -120,8 +108,6 @@ windchime demux <barcodes_file>
 ```bash
 windchime demux barcodes.tsv
 ```
-
----
 
 #### 3. Pipeline
 
@@ -161,8 +147,6 @@ windchime pipeline --env-name qiime2-amplicon-2024.10 \
                    --target 16s \
                    --skip-existing
 ```
-
----
 
 #### 4. RunAll
 
@@ -207,8 +191,6 @@ windchime runall --env-name qiime2-amplicon-2024.10 \
                   --skip-existing
 ```
 
----
-
 #### 5. DownloadDBs
 
 Download (and unzip) the required pr2 database files to `windchime_out/db/pr2`. Use the force option to re-download even if the files already exist.
@@ -228,8 +210,6 @@ windchime downloaddbs [OPTIONS]
 ```bash
 windchime downloaddbs --force
 ```
-
----
 
 ## Pipeline Overview
 
@@ -252,8 +232,6 @@ Windchime’s pipeline integrates several QIIME2 steps, which are executed in or
 
 All generated files are stored in the `windchime_out` directory.
 
----
-
 ## Verbose Mode
 
 For detailed debugging information, use the `--verbose` (or `-v`) flag. In verbose mode, Windchime prints the exact QIIME2 and shell commands being executed rather than displaying progress spinners.
@@ -263,8 +241,6 @@ For detailed debugging information, use the `--verbose` (or `-v`) flag. In verbo
 ```bash
 windchime pipeline --verbose --env-name qiime2-amplicon-2024.10 --manifest manifest.tsv --metadata metadata.tsv
 ```
-
----
 
 ## Attribution
 
@@ -276,19 +252,13 @@ Windchime borrows significantly from the original QIIME2 ASV protocols developed
 - **QIIME2 16S ASV Protocol**  
   [https://github.com/allenlab/QIIME2_16S_ASV_protocol](https://github.com/allenlab/QIIME2_16S_ASV_protocol)
 
----
-
 ## Contributing
 
 Contributions are welcome! If you find any bugs or have feature suggestions, please open an issue or submit a pull request on the project repository.
 
----
-
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
-
----
 
 ## Contact
 
@@ -297,4 +267,4 @@ For further questions or feedback, please reach out to:
 - **Author:** [Nikolas Yanek-Chrones]
 - **Email:** [research@icarai.io]
 
----
+
