@@ -46,7 +46,27 @@ Windchime is organized into several subcommands, each covering a different part 
 
 ### Subcommands
 
-#### 1. InstallEnv
+#### 1. Wizard
+
+The recommended way to get started. This interactive wizard guides you through the entire workflow, prompting for necessary inputs and explaining each step.
+
+```bash
+windchime wizard
+```
+
+The wizard will help you:
+- Set up and verify the QIIME2 environment
+- Run demultiplexing (if needed)
+- Generate the QIIME2 manifest file
+- Download required databases
+- Configure and run the pipeline with your settings
+
+**Example:**
+```bash
+windchime wizard
+```
+
+#### 2. InstallEnv
 
 Install (or skip if already present) the specified QIIME2 Conda environment.
 
@@ -66,7 +86,7 @@ windchime install-env [OPTIONS]
 windchime install-env --env-name qiime2-amplicon-2024.10
 ```
 
-#### 2. Demux
+#### 3. Demux
 
 Run demultiplexing using a barcodes file. This subcommand leverages the internal `demultiplex` module.
 
@@ -80,7 +100,7 @@ windchime demux <barcodes_file>
 windchime demux barcodes.tsv
 ```
 
-#### 3. Pipeline
+#### 4. Pipeline
 
 Execute steps 2–7 of the QIIME2 pipeline using a QIIME2 manifest file. This command covers import, trimming, denoising, taxonomic classification, and merging outputs.
 
@@ -118,7 +138,7 @@ windchime pipeline --env-name qiime2-amplicon-2024.10 \
                    --skip-existing
 ```
 
-#### 4. RunAll
+#### 5. RunAll
 
 A single command to run the entire workflow: install the environment (if needed), demultiplex, generate the manifest, download databases, and execute the pipeline.
 
@@ -160,7 +180,7 @@ windchime runall --env-name qiime2-amplicon-2024.10 \
                   --skip-existing
 ```
 
-#### 5. DownloadDBs
+#### 6. DownloadDBs
 
 Download (and unzip) the required pr2 database files to `windchime_out/db/pr2`. Use the force option to re-download even if the files already exist.
 
