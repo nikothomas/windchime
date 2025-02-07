@@ -300,11 +300,10 @@ pub fn download_databases(force: bool) -> Result<(), Box<dyn Error>> {
 pub fn run_pipeline(
     env_name: &str,
     manifest: &str,
-    metadata: &str,
     cores: usize,
     target: &str,
     skip_existing: bool,
-    use_pretrained_classifier: bool, // <--- ADDED FLAG
+    use_pretrained_classifier: bool,
 ) -> Result<(), Box<dyn Error>> {
     fs::create_dir_all(OUTPUT_DIR)?;
 

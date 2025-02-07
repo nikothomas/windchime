@@ -62,24 +62,20 @@ enum Commands {
         #[arg(short, long, default_value = "manifest.tsv")]
         manifest: String,
 
-        /// QIIME2 metadata file.
-        #[arg(short, long, default_value = "metadata.tsv")]
-        metadata: String,
-
         /// Number of CPU cores to use.
         #[arg(long, default_value_t = 1)]
         cores: usize,
 
-        /// Target region: choose "16s" or "18s" (default: 18s)
-        #[arg(short, long, default_value = "18s", value_parser = ["16s", "18s"])]
+        /// Target region (16s or 18s).
+        #[arg(short, long, default_value = "18s")]
         target: String,
 
-        /// If true, skip any steps whose expected QIIME artifacts already exist
+        /// Skip pipeline steps if expected outputs already exist.
         #[arg(long, default_value_t = false)]
         skip_existing: bool,
 
-        /// If true, download/use a pre-trained classifier instead of training one
-        #[arg(long, default_value_t = false)]
+        /// Use a pre-trained classifier instead of training from PR2 references.
+        #[arg(long, default_value_t = true)]
         use_pretrained_classifier: bool,
     },
     /// Single command: install env if needed, demultiplex, generate manifest, download DBs, pipeline
@@ -91,28 +87,24 @@ enum Commands {
         #[arg(long, default_value = "barcodes.tsv")]
         barcodes_file: String,
 
-        /// QIIME2 manifest file (if not provided, it will be generated).
+        /// QIIME2 manifest file.
         #[arg(short, long, default_value = "manifest.tsv")]
         manifest: String,
-
-        /// QIIME2 metadata file.
-        #[arg(short, long, default_value = "metadata.tsv")]
-        metadata: String,
 
         /// Number of CPU cores to use.
         #[arg(long, default_value_t = 1)]
         cores: usize,
 
-        /// Target region: choose "16s" or "18s" (default: 18s)
-        #[arg(short, long, default_value = "18s", value_parser = ["16s", "18s"])]
+        /// Target region (16s or 18s).
+        #[arg(short, long, default_value = "18s")]
         target: String,
 
-        /// If true, skip any steps whose expected QIIME artifacts already exist
+        /// Skip pipeline steps if expected outputs already exist.
         #[arg(long, default_value_t = false)]
         skip_existing: bool,
 
-        /// If true, download/use a pre-trained classifier instead of training one
-        #[arg(long, default_value_t = false)]
+        /// Use a pre-trained classifier instead of training from PR2 references.
+        #[arg(long, default_value_t = true)]
         use_pretrained_classifier: bool,
     },
     /// Download the database files (and unzip them if needed).
@@ -171,7 +163,6 @@ fn main() {
         Commands::Pipeline {
             env_name,
             manifest,
-            metadata,
             cores,
             target,
             skip_existing,
@@ -181,7 +172,6 @@ fn main() {
             pipeline::run_pipeline(
                 &env_name,
                 &manifest,
-                &metadata,
                 cores,
                 &target,
                 skip_existing,
@@ -192,7 +182,6 @@ fn main() {
             env_name,
             barcodes_file,
             manifest,
-            metadata,
             cores,
             target,
             skip_existing,
@@ -214,7 +203,6 @@ fn main() {
             pipeline::run_pipeline(
                 &env_name,
                 &manifest,
-                &metadata,
                 cores,
                 &target,
                 skip_existing,

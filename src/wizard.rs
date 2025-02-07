@@ -118,7 +118,6 @@ pub fn run_wizard() -> Result<(), Box<dyn Error>> {
         pipeline::run_pipeline(
             &env_name,
             &manifest,
-            "metadata.tsv",
             cores,
             &target,
             skip_existing,

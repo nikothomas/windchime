@@ -105,7 +105,7 @@ windchime demux barcodes.tsv
 
 #### 3. Pipeline
 
-Execute steps 2–7 of the QIIME2 pipeline using a QIIME2 manifest file and metadata file. This command covers import, trimming, denoising, taxonomic classification, and merging outputs.
+Execute steps 2–7 of the QIIME2 pipeline using a QIIME2 manifest file. This command covers import, trimming, denoising, taxonomic classification, and merging outputs.
 
 ```bash
 windchime pipeline [OPTIONS]
@@ -119,9 +119,6 @@ windchime pipeline [OPTIONS]
 - `-m, --manifest <manifest>`  
   Path to the QIIME2 manifest file.  
   *Default:* `manifest.tsv`
-- `-M, --metadata <metadata>`  
-  Path to the metadata file.  
-  *Default:* `metadata.tsv`
 - `--cores <cores>`  
   Number of CPU cores to use.  
   *Default:* `1`
@@ -130,13 +127,15 @@ windchime pipeline [OPTIONS]
   *Default:* `18s`
 - `--skip-existing`  
   If set, skips any pipeline steps where expected output files already exist.
+- `--use-pretrained-classifier`  
+  Use a pre-trained classifier instead of training from PR2 references.  
+  *Default:* `true`
 
 **Example:**
 
 ```bash
 windchime pipeline --env-name qiime2-amplicon-2024.10 \
                    --manifest manifest.tsv \
-                   --metadata metadata.tsv \
                    --cores 4 \
                    --target 16s \
                    --skip-existing
@@ -161,9 +160,6 @@ windchime runall [OPTIONS]
 - `-m, --manifest <manifest>`  
   Path for the QIIME2 manifest file.  
   *Default:* `manifest.tsv`
-- `-M, --metadata <metadata>`  
-  Path for the metadata file.  
-  *Default:* `metadata.tsv`
 - `--cores <cores>`  
   Number of CPU cores to use.  
   *Default:* `1`
@@ -172,6 +168,9 @@ windchime runall [OPTIONS]
   *Default:* `18s`
 - `--skip-existing`  
   Skip steps if expected outputs already exist.
+- `--use-pretrained-classifier`  
+  Use a pre-trained classifier instead of training from PR2 references.  
+  *Default:* `true`
 
 **Example:**
 
@@ -179,7 +178,6 @@ windchime runall [OPTIONS]
 windchime runall --env-name qiime2-amplicon-2024.10 \
                   --barcodes-file barcodes.tsv \
                   --manifest manifest.tsv \
-                  --metadata metadata.tsv \
                   --cores 4 \
                   --target 18s \
                   --skip-existing
@@ -233,7 +231,7 @@ For detailed debugging information, use the `--verbose` (or `-v`) flag. In verbo
 **Example:**
 
 ```bash
-windchime pipeline --verbose --env-name qiime2-amplicon-2024.10 --manifest manifest.tsv --metadata metadata.tsv
+windchime pipeline --verbose --env-name qiime2-amplicon-2024.10 --manifest manifest.tsv
 ```
 
 ## Attribution
