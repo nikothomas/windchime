@@ -4,36 +4,6 @@
 
 > **Note:** This tool assumes that you have Conda installed and available in your system's PATH, as it leverages Conda for installing QIIME2 environments and running QIIME2 commands.
 
-## Table of Contents
-
-- [Features](#features)
-- [Requirements](#requirements)
-- [Installation](#installation)
-- [Usage](#usage)
-    - [Global Options](#global-options)
-    - [Subcommands](#subcommands)
-        - [InstallEnv](#1-installenv)
-        - [Demux](#2-demux)
-        - [Pipeline](#3-pipeline)
-        - [RunAll](#4-runall)
-        - [DownloadDBs](#5-downloaddbs)
-- [Pipeline Overview](#pipeline-overview)
-- [Verbose Mode](#verbose-mode)
-- [Attribution](#attribution)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
-
-## Features
-
-- **Environment Management:** Installs and checks for an existing QIIME2 Conda environment.
-- **Demultiplexing:** Runs demultiplexing based on a provided barcodes file.
-- **Manifest Generation:** (via the `demultiplex` module) Creates a QIIME2 manifest file if needed.
-- **Database Preparation:** Downloads and unzips pr2 database files.
-- **Multi-Step Pipeline:** Executes a series of QIIME2 commands that import, trim, denoise, classify, and merge sequencing data.
-- **Target-Specific Support:** Supports both 16S and 18S target regions by adjusting adapter and primer sequences.
-- **Progress Reporting:** Uses a spinner progress bar by default (with an option for verbose output).
-
 ## Requirements
 
 - **Rust:** Ensure you have [Rust installed](https://www.rust-lang.org/tools/install) to build from source.
