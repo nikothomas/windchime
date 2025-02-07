@@ -70,11 +70,6 @@ pub fn run_wizard() -> Result<(), Box<dyn Error>> {
                 .interact_text()?
         };
 
-        let metadata: String = Input::with_theme(&ColorfulTheme::default())
-            .with_prompt("Enter the metadata file path")
-            .default("metadata.tsv".into())
-            .interact_text()?;
-
         let cores: usize = Input::with_theme(&ColorfulTheme::default())
             .with_prompt("Number of CPU cores to use")
             .default("1".into())
@@ -101,7 +96,7 @@ pub fn run_wizard() -> Result<(), Box<dyn Error>> {
             .interact_text()?;
 
         // Run pipeline
-        pipeline::run_pipeline(&env_name, &manifest, &metadata, cores, &target, false)?;
+        pipeline::run_pipeline(&env_name, &manifest, "metadata.tsv", cores, &target, false)?;
         print_success("Pipeline completed!");
     }
 

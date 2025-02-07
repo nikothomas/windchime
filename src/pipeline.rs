@@ -420,15 +420,14 @@ pub fn run_pipeline(
             ))
         })?;
         
-        // Add feature table summarization with metadata
+        // Add basic feature table summarization without metadata
         let table_dada2_qzv = out_path("asvs/table-dada2.qzv");
-        run_step("Summarizing feature table with metadata", || {
+        run_step("Summarizing feature table", || {
             run_conda_qiime_command(env_name, &format!(
                 "feature-table summarize \
                  --i-table {} \
-                 --o-visualization {} \
-                 --m-sample-metadata-file {}",
-                table_dada2_qza, table_dada2_qzv, metadata
+                 --o-visualization {}",
+                table_dada2_qza, table_dada2_qzv
             ))
         })?;
     }
