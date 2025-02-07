@@ -34,8 +34,6 @@ jobs:
         include:
           - os: ubuntu-latest
             platform: linux-x86_64
-          - os: ubuntu-latest
-            platform: linux-aarch64
           - os: macos-latest
             platform: macos-x86_64
           - os: macos-latest
@@ -52,40 +50,13 @@ jobs:
           override: true
 
       - name: Set up cross-compilation for ARM64
-        if: endsWith(matrix.platform, 'aarch64')
+        if: matrix.platform == 'macos-aarch64'
         run: |
-          rustup target add aarch64-unknown-linux-gnu
           rustup target add aarch64-apple-darwin
 
       - name: Build for Linux x86_64
         if: matrix.platform == 'linux-x86_64'
         run: cargo build --release
-
-      - name: Build for Linux ARM64
-        if: matrix.platform == 'linux-aarch64'
-        run: |
-          sudo dpkg --add-architecture arm64
-          # Add jammy (22.04) repositories for arm64
-          sudo tee /etc/apt/sources.list.d/ubuntu-jammy-arm64.list << EOF
-          deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports jammy main restricted universe multiverse
-          deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports jammy-updates main restricted universe multiverse
-          deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports jammy-security main restricted universe multiverse
-          EOF
-          sudo apt-get update
-          sudo apt-get install -y gcc-aarch64-linux-gnu
-          # Install OpenSSL dev packages for ARM64
-          sudo apt-get install -y libssl-dev pkg-config
-          sudo apt-get install -y crossbuild-essential-arm64
-          # Set up cross-compilation environment variables
-          export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc
-          export CC_aarch64_unknown_linux_gnu=aarch64-linux-gnu-gcc
-          export CXX_aarch64_unknown_linux_gnu=aarch64-linux-gnu-g++
-          export PKG_CONFIG_ALLOW_CROSS=1
-          export PKG_CONFIG_PATH=/usr/lib/aarch64-linux-gnu/pkgconfig
-          export OPENSSL_DIR=/usr
-          export OPENSSL_LIB_DIR=/usr/lib/aarch64-linux-gnu
-          export OPENSSL_INCLUDE_DIR=/usr/include
-          cargo build --release --target aarch64-unknown-linux-gnu
 
       - name: Build for macOS x86_64
         if: matrix.platform == 'macos-x86_64'
@@ -100,8 +71,6 @@ jobs:
           mkdir -p release
           if [[ "${{ matrix.platform }}" == "linux-x86_64" ]]; then
             cp target/release/windchime release/
-          elif [[ "${{ matrix.platform }}" == "linux-aarch64" ]]; then
-            cp target/aarch64-unknown-linux-gnu/release/windchime release/
           elif [[ "${{ matrix.platform }}" == "macos-x86_64" ]]; then
             cp target/release/windchime release/
           else

@@ -20,13 +20,17 @@ curl -fsSL https://raw.githubusercontent.com/nik/windchime/main/install.sh | sh
 ```
 
 This will:
-1. Download the latest release for your platform (macOS or Linux, x86_64 or ARM64)
+1. Download the latest release for your platform:
+   - Linux (x86_64)
+   - macOS (Intel x86_64 or Apple Silicon ARM64)
 2. Install it to `~/.windchime/bin`
 3. Add it to your PATH
 
 Alternatively, you can:
 1. Download the latest release manually from the [releases page](https://github.com/nik/windchime/releases)
 2. Extract it and place it in a directory in your PATH
+
+> **Note:** For other platforms (e.g., Linux ARM64), you'll need to build from source using `cargo build --release`.
 
 ## Usage
 
