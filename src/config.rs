@@ -22,13 +22,8 @@ impl Default for WindchimeConfig {
 
 pub fn load_config(path: &str) -> Result<WindchimeConfig, Box<dyn Error>> {
     let mut settings = Config::default();
-    // Reads "path.toml" or "path.json" if you added "json" feature
+    // Reads "path.toml" or "path.json" if "json" feature enabled
     settings.merge(File::with_name(path))?;
-
-    // Either:
     let cfg: WindchimeConfig = settings.try_deserialize()?;
-    // or:
-    // let cfg: WindchimeConfig = settings.try_into()?;
-
     Ok(cfg)
 }

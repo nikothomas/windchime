@@ -4,7 +4,7 @@ set -e
 # Configuration
 INSTALL_DIR="$HOME/.windchime"
 BIN_DIR="$INSTALL_DIR/bin"
-REPO_OWNER="nik"  # Change this to your GitHub username
+REPO_OWNER="nikothomas"
 REPO_NAME="windchime"
 
 # Colors for output

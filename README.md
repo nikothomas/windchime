@@ -16,7 +16,7 @@
 You can install windchime using our installer script:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/nik/windchime/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/nikothomas/windchime/main/install.sh | sh
 ```
 
 This will:
