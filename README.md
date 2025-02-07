@@ -6,10 +6,13 @@
 
 ## Requirements
 
-- **Rust:** Ensure you have [Rust installed](https://www.rust-lang.org/tools/install) to build from source.
 - **Conda:** Required for managing the QIIME2 environment. [Install Miniconda or Anaconda](https://docs.conda.io/en/latest/miniconda.html) if you haven't already.
 - **QIIME2:** The pipeline depends on QIIME2 commands, which are executed within a Conda environment (windchime can install this for you).
 - **Internet Connection:** Needed to download database files and QIIME2 environment YAML files.
+- **Supported Platform:** One of the following:
+  - Linux (x86_64)
+  - macOS (Intel x86_64)
+  - macOS (Apple Silicon ARM64)
 
 ## Installation
 
@@ -27,10 +30,10 @@ This will:
 3. Add it to your PATH
 
 Alternatively, you can:
-1. Download the latest release manually from the [releases page](https://github.com/nik/windchime/releases)
+1. Download the latest release manually from the [releases page](https://github.com/nikothomas/windchime/releases)
 2. Extract it and place it in a directory in your PATH
 
-> **Note:** For other platforms (e.g., Linux ARM64), you'll need to build from source using `cargo build --release`.
+> **Note:** For other platforms, you'll need to build from source. See the [Contributing](#contributing) section for development setup instructions.
 
 ## Usage
 
