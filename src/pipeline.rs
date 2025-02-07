@@ -107,7 +107,7 @@ pub fn conda_env_exists(env_name: &str) -> Result<bool, Box<dyn Error>> {
     )
 }
 
-/// Installs the specified QIIME2 environment if it doesn’t already exist.
+/// Installs the specified QIIME2 environment if it doesn't already exist.
 pub fn install_qiime2_amplicon_2024_10(env_name: &str) -> Result<(), Box<dyn Error>> {
     match conda_env_exists(env_name) {
         Ok(true) => {
@@ -419,6 +419,18 @@ pub fn run_pipeline(
                 out_path("asvs/stats-dada2.qzv")
             ))
         })?;
+        
+        // Add feature table summarization with metadata
+        let table_dada2_qzv = out_path("asvs/table-dada2.qzv");
+        run_step("Summarizing feature table with metadata", || {
+            run_conda_qiime_command(env_name, &format!(
+                "feature-table summarize \
+                 --i-table {} \
+                 --o-visualization {} \
+                 --m-sample-metadata-file {}",
+                table_dada2_qza, table_dada2_qzv, metadata
+            ))
+        })?;
     }
 
     // Step 5: Export Denoised Data
@@ -581,9 +593,6 @@ pub fn run_pipeline(
     print_success("Pipeline completed successfully!");
     print_info("Final summary: see 'windchime_out/asv_count_tax.tsv' for merged results.");
 
-    // Optionally parse a quick stat from the asv_count_tax or DADA2 stats file
-    // and print an immediate final summary:
-    // (Pseudo example)
     if Path::new(&out_path("asvs/stats-dada2.qzv")).exists() {
         print_info("You can view 'asvs/stats-dada2.qzv' in QIIME2 View for DADA2 stats.");
     }

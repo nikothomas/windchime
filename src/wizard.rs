@@ -27,7 +27,7 @@ pub fn run_wizard() -> Result<(), Box<dyn Error>> {
     // Prompt for barcodes file
     let barcodes_file: String = Input::with_theme(&ColorfulTheme::default())
         .with_prompt("Path to barcodes file (or leave blank to skip demux)")
-        .default("barcodes.tsv".into())
+        .default("".into())
         .allow_empty(true)
         .interact_text()?;
 
