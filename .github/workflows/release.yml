@@ -1,0 +1,99 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    steps:
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: Release v${{ github.run_number }}
+          draft: false
+          prerelease: false
+
+  build-and-release:
+    needs: create-release
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            platform: linux-x86_64
+          - os: ubuntu-latest
+            platform: linux-aarch64
+          - os: macos-latest
+            platform: macos-x86_64
+          - os: macos-latest
+            platform: macos-aarch64
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          override: true
+
+      - name: Set up cross-compilation for ARM64
+        if: endsWith(matrix.platform, 'aarch64')
+        run: |
+          rustup target add aarch64-unknown-linux-gnu
+          rustup target add aarch64-apple-darwin
+
+      - name: Build for Linux x86_64
+        if: matrix.platform == 'linux-x86_64'
+        run: cargo build --release
+
+      - name: Build for Linux ARM64
+        if: matrix.platform == 'linux-aarch64'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-aarch64-linux-gnu
+          cargo build --release --target aarch64-unknown-linux-gnu
+
+      - name: Build for macOS x86_64
+        if: matrix.platform == 'macos-x86_64'
+        run: cargo build --release
+
+      - name: Build for macOS ARM64
+        if: matrix.platform == 'macos-aarch64'
+        run: cargo build --release --target aarch64-apple-darwin
+
+      - name: Package Binary
+        run: |
+          mkdir -p release
+          if [[ "${{ matrix.platform }}" == "linux-x86_64" ]]; then
+            cp target/release/windchime release/
+          elif [[ "${{ matrix.platform }}" == "linux-aarch64" ]]; then
+            cp target/aarch64-unknown-linux-gnu/release/windchime release/
+          elif [[ "${{ matrix.platform }}" == "macos-x86_64" ]]; then
+            cp target/release/windchime release/
+          else
+            cp target/aarch64-apple-darwin/release/windchime release/
+          fi
+          cd release
+          tar czf ../windchime-${{ matrix.platform }}.tar.gz windchime
+          cd ..
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./windchime-${{ matrix.platform }}.tar.gz
+          asset_name: windchime-${{ matrix.platform }}.tar.gz
+          asset_content_type: application/gzip 
