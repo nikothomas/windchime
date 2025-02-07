@@ -4,12 +4,39 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-clap = { version = "4.0", features = ["derive"] }
+# Command-line argument parsing
+clap = { version = "4.3", features = ["derive"] }
 
-# For demultiplexing:
+# For color-coded terminal output
+colored = "2.0"
+
+# For interactive wizard prompts
+dialoguer = "0.10"
+
+# For progress bars and spinners
+indicatif = "0.17.11"
+
+# For parallel processing in demultiplex
+rayon = "1.10.0"
+
+# For reading/writing gzipped FASTQs
 bio = "2.0.3"
 flate2 = "1.0"
-indicatif = "0.17.11"
-rayon = "1.6"
-csv = "1.3.1"
-reqwest = { version = "0.12.12" , features = ["blocking"]}
+
+# For config-file support (TOML, JSON, etc.)
+config = "0.13"
+
+# For file, IO, and path operations
+reqwest = { version = "0.12.12", features = ["blocking"] }
+
+# For date-time stamping in logs
+chrono = "0.4"
+
+# CSV reading/writing for merging taxonomy
+csv = "1.1"
+serde = { version = "1.0.217", features = ["derive"] }
+once_cell = "1.20.2"
+
+[profile.release]
+# Optional: If you want faster performance on large data
+opt-level = 3
