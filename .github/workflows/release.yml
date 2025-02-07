@@ -65,6 +65,12 @@ jobs:
         if: matrix.platform == 'linux-aarch64'
         run: |
           sudo dpkg --add-architecture arm64
+          # Add jammy (22.04) repositories for arm64
+          sudo tee /etc/apt/sources.list.d/ubuntu-jammy-arm64.list << EOF
+          deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports jammy main restricted universe multiverse
+          deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports jammy-updates main restricted universe multiverse
+          deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports jammy-security main restricted universe multiverse
+          EOF
           sudo apt-get update
           sudo apt-get install -y gcc-aarch64-linux-gnu
           # Install OpenSSL dev packages for ARM64
