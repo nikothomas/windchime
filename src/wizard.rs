@@ -24,9 +24,9 @@ pub fn run_wizard() -> Result<(), Box<dyn Error>> {
         print_success(&format!("Environment '{}' is ready.", env_name));
     }
 
-    // Prompt for barcodes file
+    // Prompt for barcodes file (optional)
     let barcodes_file: String = Input::with_theme(&ColorfulTheme::default())
-        .with_prompt("Path to barcodes file (or leave blank to skip demux)")
+        .with_prompt("Path to barcodes file (leave blank to skip demultiplexing)")
         .default("".into())
         .allow_empty(true)
         .interact_text()?;
@@ -35,14 +35,16 @@ pub fn run_wizard() -> Result<(), Box<dyn Error>> {
     if do_demux {
         print_info("Running demultiplex step...");
         demultiplex::run_demultiplex_combined(&barcodes_file, false)?;
-        // Generate manifest
+        print_success("Demultiplexing complete.");
+
+        // Generate manifest?
         let generate_manifest = Confirm::with_theme(&ColorfulTheme::default())
             .with_prompt("Generate QIIME manifest from the barcodes file?")
             .default(true)
             .interact()?;
         if generate_manifest {
             demultiplex::generate_qiime_manifest(&barcodes_file, "manifest.tsv")?;
-            print_success("Manifest file created in output directory.");
+            print_success("Manifest file created in output directory (manifest.tsv).");
         }
     }
 
@@ -56,14 +58,18 @@ pub fn run_wizard() -> Result<(), Box<dyn Error>> {
         print_success("Reference databases downloaded!");
     }
 
-    // Prompt for pipeline steps
+    // Prompt if user wants to run the full pipeline
     let run_pipeline_now = Confirm::with_theme(&ColorfulTheme::default())
         .with_prompt("Run the QIIME pipeline now?")
         .default(true)
         .interact()?;
     if run_pipeline_now {
         // Collect pipeline arguments
-        let manifest = if do_demux { "manifest.tsv".to_string() } else {
+        let manifest = if do_demux {
+            // If we've demultiplexed and created a manifest already, default to 'manifest.tsv'
+            "manifest.tsv".to_string()
+        } else {
+            // Otherwise, let the user specify a manifest
             Input::with_theme(&ColorfulTheme::default())
                 .with_prompt("Enter the manifest file path")
                 .default("manifest.tsv".into())
@@ -95,8 +101,29 @@ pub fn run_wizard() -> Result<(), Box<dyn Error>> {
             })
             .interact_text()?;
 
+        // Ask if we should skip artifacts already present
+        let skip_existing = Confirm::with_theme(&ColorfulTheme::default())
+            .with_prompt("Skip existing QIIME artifacts if found?")
+            .default(false)
+            .interact()?;
+
+        // Ask if we should use a pre-trained classifier
+        let use_pretrained_classifier = Confirm::with_theme(&ColorfulTheme::default())
+            .with_prompt("Use a pre-trained classifier (downloaded) instead of training from PR2 references?")
+            .default(true)
+            .interact()?;
+
         // Run pipeline
-        pipeline::run_pipeline(&env_name, &manifest, "metadata.tsv", cores, &target, false)?;
+        print_info("Launching pipeline...");
+        pipeline::run_pipeline(
+            &env_name,
+            &manifest,
+            "metadata.tsv",
+            cores,
+            &target,
+            skip_existing,
+            use_pretrained_classifier
+        )?;
         print_success("Pipeline completed!");
     }
 

@@ -2,7 +2,7 @@
 
 **Windchime** is a Rust-based command-line interface (CLI) tool designed to simplify running a [QIIME2](https://qiime2.org/) amplicon sequencing pipeline for 16S/18S analysis. It provides integrated steps for environment setup, demultiplexing, database preparation, and executing a multi-step QIIME2 workflow—from importing files to generating merged output tables.
 
-> **Note:** This tool assumes that you have Conda installed and available in your system’s PATH, as it leverages Conda for installing QIIME2 environments and running QIIME2 commands.
+> **Note:** This tool assumes that you have Conda installed and available in your system's PATH, as it leverages Conda for installing QIIME2 environments and running QIIME2 commands.
 
 ## Table of Contents
 
@@ -37,32 +37,26 @@
 ## Requirements
 
 - **Rust:** Ensure you have [Rust installed](https://www.rust-lang.org/tools/install) to build from source.
-- **Conda:** Required for managing the QIIME2 environment. [Install Miniconda or Anaconda](https://docs.conda.io/en/latest/miniconda.html) if you haven’t already.
+- **Conda:** Required for managing the QIIME2 environment. [Install Miniconda or Anaconda](https://docs.conda.io/en/latest/miniconda.html) if you haven't already.
 - **QIIME2:** The pipeline depends on QIIME2 commands, which are executed within a Conda environment (windchime can install this for you).
 - **Internet Connection:** Needed to download database files and QIIME2 environment YAML files.
 
 ## Installation
 
-1. **Clone the Repository:**
+You can install windchime using our installer script:
 
-   ```bash
-   git clone <repository-url>
-   cd windchime
-   ```
+```bash
+curl -fsSL https://raw.githubusercontent.com/nik/windchime/main/install.sh | sh
+```
 
-2. **Build the Application:**
+This will:
+1. Download the latest release for your platform (macOS or Linux, x86_64 or ARM64)
+2. Install it to `~/.windchime/bin`
+3. Add it to your PATH
 
-   ```bash
-   cargo build --release
-   ```
-
-3. **(Optional) Install the Binary Globally:**
-
-   Copy the release binary to a directory in your PATH:
-
-   ```bash
-   cp target/release/windchime /usr/local/bin/
-   ```
+Alternatively, you can:
+1. Download the latest release manually from the [releases page](https://github.com/nik/windchime/releases)
+2. Extract it and place it in a directory in your PATH
 
 ## Usage
 
@@ -213,7 +207,7 @@ windchime downloaddbs --force
 
 ## Pipeline Overview
 
-Windchime’s pipeline integrates several QIIME2 steps, which are executed in order:
+Windchime's pipeline integrates several QIIME2 steps, which are executed in order:
 
 1. **Importing Files:**  
    Uses a manifest file to import paired-end sequencing data into a QIIME2 artifact.

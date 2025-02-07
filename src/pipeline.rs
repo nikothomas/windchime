@@ -304,6 +304,7 @@ pub fn run_pipeline(
     cores: usize,
     target: &str,
     skip_existing: bool,
+    use_pretrained_classifier: bool, // <--- ADDED FLAG
 ) -> Result<(), Box<dyn Error>> {
     fs::create_dir_all(OUTPUT_DIR)?;
 
@@ -482,13 +483,12 @@ pub fn run_pipeline(
             ))
         })?;
     }
-
-    // Step 6: Taxonomic Annotation
     let pr2_dir = out_path("db/pr2");
+    fs::create_dir_all(&pr2_dir)?;
+    // 6a) Import PR2 reference sequences
     let pr2_qza = out_path("db/pr2/pr2.qza");
     if !skip_existing || !Path::new(&pr2_qza).exists() {
         run_step("Importing pr2 sequences", || {
-            fs::create_dir_all(&pr2_dir)?;
             run_conda_qiime_command(env_name, &format!(
                 "tools import --type FeatureData[Sequence] \
                  --input-path {} \
@@ -499,6 +499,7 @@ pub fn run_pipeline(
         })?;
     }
 
+    // 6b) Import PR2 reference taxonomy
     let pr2_tax_qza = out_path("db/pr2/pr2_tax.qza");
     if !skip_existing || !Path::new(&pr2_tax_qza).exists() {
         run_step("Importing pr2 taxonomy", || {
@@ -513,34 +514,60 @@ pub fn run_pipeline(
         })?;
     }
 
-    let pr2_extracts_qza = out_path("db/pr2/pr2_extracts.qza");
-    if !skip_existing || !Path::new(&pr2_extracts_qza).exists() {
-        run_step("Extracting pr2 reads", || {
-            run_conda_qiime_command(env_name, &format!(
-                "feature-classifier extract-reads \
-                 --i-sequences {} \
-                 --p-f-primer {} \
-                 --p-r-primer {} \
-                 --o-reads {}",
-                pr2_qza, primer_f, primer_r, pr2_extracts_qza
-            ))
-        })?;
-    }
-
+    // 6c) Either download a pre-trained classifier OR extract & train from PR2
     let pr2_classifier_qza = out_path("db/pr2/pr2_classifier.qza");
-    if !skip_existing || !Path::new(&pr2_classifier_qza).exists() {
-        run_step("Fitting pr2 classifier", || {
-            run_conda_qiime_command(env_name, &format!(
-                "feature-classifier fit-classifier-naive-bayes \
-                 --i-reference-reads {} \
-                 --i-reference-taxonomy {} \
-                 --o-classifier {} \
-                 --p-classify--chunk-size 100000",
-                pr2_extracts_qza, pr2_tax_qza, pr2_classifier_qza
-            ))
-        })?;
+
+    if use_pretrained_classifier {
+        // *** Use a pre-trained classifier ***
+
+        let pr2_classifier_url = "https://windchime.poleshift.cloud/pr2_classifier.qza.gz";
+        let pr2_classifier_gz  = out_path("db/pr2/pr2_classifier.qza.gz");
+
+        if !skip_existing || !Path::new(&pr2_classifier_qza).exists() {
+            run_step("Downloading pre-trained PR2 classifier", || {
+                // Download .gz to db/pr2
+                download_file(pr2_classifier_url, &pr2_classifier_gz, skip_existing)?;
+                // Unzip it so we have pr2_classifier.qza
+                unzip_file(&pr2_classifier_gz, &pr2_classifier_qza, skip_existing)?;
+                Ok(())
+            })?;
+        }
+    } else {
+        // *** Extract reads & train your own classifier ***
+
+        let pr2_extracts_qza = out_path("db/pr2/pr2_extracts.qza");
+        if !skip_existing || !Path::new(&pr2_extracts_qza).exists() {
+            run_step("Extracting pr2 reads", || {
+                // For illustration, we'll pick some generic primer F/R here:
+                let primer_f = "GTGYCAGCMGCCGCGGTAA";
+                let primer_r = "CCGYCAATTYMTTTRAGTTT";
+                run_conda_qiime_command(env_name, &format!(
+                    "feature-classifier extract-reads \
+                     --i-sequences {} \
+                     --p-f-primer {} \
+                     --p-r-primer {} \
+                     --o-reads {}",
+                    pr2_qza, primer_f, primer_r, pr2_extracts_qza
+                ))
+            })?;
+        }
+
+        if !skip_existing || !Path::new(&pr2_classifier_qza).exists() {
+            run_step("Fitting pr2 classifier", || {
+                run_conda_qiime_command(env_name, &format!(
+                    "feature-classifier fit-classifier-naive-bayes \
+                     --i-reference-reads {} \
+                     --i-reference-taxonomy {} \
+                     --o-classifier {} \
+                     --p-classify--chunk-size 100000",
+                    pr2_extracts_qza, pr2_tax_qza, pr2_classifier_qza
+                ))
+            })?;
+        }
     }
 
+    // 6d) Classify your representative sequences
+    let rep_seqs_dada2_qza = out_path("asvs/rep-seqs-dada2.qza");
     let pr2_tax_sklearn_qza = out_path("pr2_tax_sklearn.qza");
     if !skip_existing || !Path::new(&pr2_tax_sklearn_qza).exists() {
         run_step("Classifying reads with pr2 classifier", || {
@@ -565,6 +592,7 @@ pub fn run_pipeline(
         })?;
     }
 
+    // 6e) Export and rename the taxonomy
     let asv_tax_dir = out_path("asv_tax_dir");
     if !skip_existing || !Path::new(&format!("{}/taxonomy.tsv", asv_tax_dir)).exists() {
         run_step("Exporting pr2 taxonomy", || {
@@ -576,8 +604,7 @@ pub fn run_pipeline(
         run_step("Renaming pr2 taxonomy file", || {
             let pr2_taxonomy_tsv = format!("{}/pr2_taxonomy.tsv", asv_tax_dir);
             let old_tsv = format!("{}/taxonomy.tsv", asv_tax_dir);
-            let mv_cmd = format!("mv {} {}", old_tsv, pr2_taxonomy_tsv);
-            run_shell_command(&mv_cmd)
+            run_shell_command(&format!("mv {} {}", old_tsv, pr2_taxonomy_tsv))
         })?;
     }
 

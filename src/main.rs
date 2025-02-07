@@ -40,6 +40,7 @@ struct Cli {
 enum Commands {
     /// Install (or skip if existing) the specified QIIME2 environment.
     InstallEnv {
+        /// Name of the conda environment to install
         #[arg(short, long, default_value = "qiime2-amplicon-2024.10")]
         env_name: String,
     },
@@ -56,40 +57,63 @@ enum Commands {
     Pipeline {
         #[arg(short, long, default_value = "qiime2-amplicon-2024.10")]
         env_name: String,
+
         /// QIIME2 manifest file.
         #[arg(short, long, default_value = "manifest.tsv")]
         manifest: String,
+
+        /// QIIME2 metadata file.
         #[arg(short, long, default_value = "metadata.tsv")]
         metadata: String,
+
+        /// Number of CPU cores to use.
         #[arg(long, default_value_t = 1)]
         cores: usize,
+
         /// Target region: choose "16s" or "18s" (default: 18s)
         #[arg(short, long, default_value = "18s", value_parser = ["16s", "18s"])]
         target: String,
+
         /// If true, skip any steps whose expected QIIME artifacts already exist
         #[arg(long, default_value_t = false)]
         skip_existing: bool,
+
+        /// If true, download/use a pre-trained classifier instead of training one
+        #[arg(long, default_value_t = false)]
+        use_pretrained_classifier: bool,
     },
     /// Single command: install env if needed, demultiplex, generate manifest, download DBs, pipeline
     RunAll {
         #[arg(short, long, default_value = "qiime2-amplicon-2024.10")]
         env_name: String,
+
         /// Path to the barcodes file for demultiplexing.
         #[arg(long, default_value = "barcodes.tsv")]
         barcodes_file: String,
+
         /// QIIME2 manifest file (if not provided, it will be generated).
         #[arg(short, long, default_value = "manifest.tsv")]
         manifest: String,
+
+        /// QIIME2 metadata file.
         #[arg(short, long, default_value = "metadata.tsv")]
         metadata: String,
+
+        /// Number of CPU cores to use.
         #[arg(long, default_value_t = 1)]
         cores: usize,
+
         /// Target region: choose "16s" or "18s" (default: 18s)
         #[arg(short, long, default_value = "18s", value_parser = ["16s", "18s"])]
         target: String,
+
         /// If true, skip any steps whose expected QIIME artifacts already exist
         #[arg(long, default_value_t = false)]
         skip_existing: bool,
+
+        /// If true, download/use a pre-trained classifier instead of training one
+        #[arg(long, default_value_t = false)]
+        use_pretrained_classifier: bool,
     },
     /// Download the database files (and unzip them if needed).
     DownloadDBs {
@@ -120,9 +144,6 @@ fn main() {
         }
     }
 
-    // If user didn't pass CLI arguments for things, but config has them, override defaults.
-    // (This is a simplified example—real usage might do more merging.)
-
     // Set the global verbose flag
     VERBOSE_MODE.store(cli.verbose, Ordering::Relaxed);
 
@@ -143,9 +164,6 @@ fn main() {
             barcodes_file,
             skip_existing,
         } => {
-            // Possibly skip if we detect demultiplexed files?
-            // For example, if skip_existing is true and the expected R1/R2 outputs exist,
-            // you might skip. This logic is up to you.
             print_info("Running demultiplex step...");
             demultiplex::run_demultiplex_combined(&barcodes_file, skip_existing)
                 .map_err(|e| e.into())
@@ -157,9 +175,18 @@ fn main() {
             cores,
             target,
             skip_existing,
+            use_pretrained_classifier,
         } => {
             print_info(&format!("Running QIIME2 pipeline with environment: {}", env_name));
-            pipeline::run_pipeline(&env_name, &manifest, &metadata, cores, &target, skip_existing)
+            pipeline::run_pipeline(
+                &env_name,
+                &manifest,
+                &metadata,
+                cores,
+                &target,
+                skip_existing,
+                use_pretrained_classifier,
+            )
         }
         Commands::RunAll {
             env_name,
@@ -169,6 +196,7 @@ fn main() {
             cores,
             target,
             skip_existing,
+            use_pretrained_classifier,
         } => {
             print_info(&format!("==> Checking conda environment '{}'", env_name));
             pipeline::install_qiime2_amplicon_2024_10(&env_name).unwrap();
@@ -183,7 +211,15 @@ fn main() {
             pipeline::download_databases(false).unwrap();
 
             print_info(&format!("==> Running QIIME2 pipeline using manifest file: {}", manifest));
-            pipeline::run_pipeline(&env_name, &manifest, &metadata, cores, &target, skip_existing)
+            pipeline::run_pipeline(
+                &env_name,
+                &manifest,
+                &metadata,
+                cores,
+                &target,
+                skip_existing,
+                use_pretrained_classifier,
+            )
         }
         Commands::DownloadDBs { force } => {
             pipeline::download_databases(force)
