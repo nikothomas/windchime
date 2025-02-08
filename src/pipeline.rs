@@ -555,9 +555,12 @@ pub fn run_pipeline(
         let pr2_extracts_qza = out_path("db/pr2/pr2_extracts.qza");
         if !skip_existing || !Path::new(&pr2_extracts_qza).exists() {
             run_step("Extracting pr2 reads", || {
-                // For illustration, we'll pick some generic primer F/R here:
-                let primer_f = "GTGYCAGCMGCCGCGGTAA";
-                let primer_r = "CCGYCAATTYMTTTRAGTTT";
+                // Use specific primers based on target
+                let (primer_f, primer_r) = match target.to_lowercase().as_str() {
+                    "18s" => ("TTGTACACACCGCCC", "CCTTCYGCAGGTTCACCTAC"),
+                    "16s" => ("GTGYCAGCMGCCGCGGTAA", "CCGYCAATTYMTTTRAGTTT"),
+                    _ => return Err("Invalid target region".into()),
+                };
                 run_conda_qiime_command(env_name, &format!(
                     "feature-classifier extract-reads \
                      --i-sequences {} \
