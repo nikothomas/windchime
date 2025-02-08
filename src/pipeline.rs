@@ -123,6 +123,18 @@ pub fn install_qiime2_amplicon_2024_10(env_name: &str) -> Result<(), Box<dyn Err
         }
     }
 
+    // Check current channel priority
+    let output = Command::new("conda")
+        .args(&["config", "--show", "channel_priority"])
+        .output()?;
+    let current_priority = String::from_utf8_lossy(&output.stdout);
+    let was_strict = current_priority.contains("strict");
+
+    // Only set to flexible if it wasn't already
+    if was_strict {
+        run_shell_command("conda config --set channel_priority flexible")?;
+    }
+
     let commands: Vec<String> = if cfg!(target_os = "macos") && cfg!(target_arch = "aarch64") {
         vec![
             format!(
@@ -154,6 +166,12 @@ pub fn install_qiime2_amplicon_2024_10(env_name: &str) -> Result<(), Box<dyn Err
     for cmd in &commands {
         run_shell_command(cmd)?;
     }
+
+    // Only reset to strict if we changed it
+    if was_strict {
+        run_shell_command("conda config --set channel_priority strict")?;
+    }
+
     print_success(&format!(
         "Installation complete. You can activate via: conda activate {}",
         env_name
