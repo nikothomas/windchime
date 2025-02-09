@@ -141,7 +141,6 @@ pub fn install_qiime2_amplicon_2024_10(env_name: &str) -> Result<(), Box<dyn Err
                 "CONDA_SUBDIR=osx-64 conda env create -n {} --file https://data.qiime2.org/distro/amplicon/qiime2-amplicon-2024.10-py310-osx-conda.yml",
                 env_name
             ),
-            format!("conda activate {}", env_name),
             "conda config --env --set subdir osx-64".to_string(),
         ]
     } else if cfg!(target_os = "macos") {
@@ -173,7 +172,7 @@ pub fn install_qiime2_amplicon_2024_10(env_name: &str) -> Result<(), Box<dyn Err
     }
 
     print_success(&format!(
-        "Installation complete. You can activate via: conda activate {}",
+        "Installation complete. Environment '{}' is ready to use.",
         env_name
     ));
     Ok(())
