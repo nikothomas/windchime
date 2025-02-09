@@ -22,7 +22,7 @@ pub const OUTPUT_DIR: &str = "windchime_out";
 
 /// CLI definition using Clap.
 #[derive(Parser, Debug)]
-#[command(name = "windchime", about = "A Rust CLI for QIIME2 16S/18S pipeline")]
+#[command(name = "windchime", about = "A Rust CLI for QIIME2 16S/18S pipeline", version = env!("CARGO_PKG_VERSION"))]
 struct Cli {
     /// Enable verbose output: print the full QIIME command for each step
     #[arg(short, long, global = true)]
@@ -217,6 +217,9 @@ fn main() {
         }
         Commands::Info => {
             print_info("Gathering system and environment info...");
+            // Show version
+            print_success(&format!("Windchime version: {}", env!("CARGO_PKG_VERSION")));
+            
             // Show OS details
             let os = std::env::consts::OS;
             let arch = std::env::consts::ARCH;
