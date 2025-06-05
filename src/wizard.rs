@@ -101,6 +101,31 @@ pub fn run_wizard() -> Result<(), Box<dyn Error>> {
             })
             .interact_text()?;
 
+        // Truncation lengths for DADA2
+        let trunc_len_f: usize = Input::with_theme(&ColorfulTheme::default())
+            .with_prompt("Forward read trunc length for DADA2 (0 = no truncation)")
+            .default("219".into())
+            .validate_with(|input: &String| -> Result<(), &str> {
+                match input.parse::<usize>() {
+                    Ok(_) => Ok(()),
+                    Err(_) => Err("Please enter a non-negative integer"),
+                }
+            })
+            .interact_text()?
+            .parse()?;
+
+        let trunc_len_r: usize = Input::with_theme(&ColorfulTheme::default())
+            .with_prompt("Reverse read trunc length for DADA2 (0 = no truncation)")
+            .default("194".into())
+            .validate_with(|input: &String| -> Result<(), &str> {
+                match input.parse::<usize>() {
+                    Ok(_) => Ok(()),
+                    Err(_) => Err("Please enter a non-negative integer"),
+                }
+            })
+            .interact_text()?
+            .parse()?;
+
         // Ask if we should skip artifacts already present
         let skip_existing = Confirm::with_theme(&ColorfulTheme::default())
             .with_prompt("Skip existing QIIME artifacts if found?")
@@ -121,7 +146,9 @@ pub fn run_wizard() -> Result<(), Box<dyn Error>> {
             cores,
             &target,
             skip_existing,
-            use_pretrained_classifier
+            use_pretrained_classifier,
+            trunc_len_f,
+            trunc_len_r
         )?;
         print_success("Pipeline completed!");
     }

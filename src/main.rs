@@ -176,6 +176,8 @@ fn main() {
                 &target,
                 skip_existing,
                 use_pretrained_classifier,
+                219,
+                194,
             )
         }
         Commands::RunAll {
@@ -207,6 +209,8 @@ fn main() {
                 &target,
                 skip_existing,
                 use_pretrained_classifier,
+                219,
+                194,
             )
         }
         Commands::DownloadDBs { force } => {

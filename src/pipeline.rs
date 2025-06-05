@@ -321,6 +321,8 @@ pub fn run_pipeline(
     target: &str,
     skip_existing: bool,
     use_pretrained_classifier: bool,
+    trunc_len_f: usize,
+    trunc_len_r: usize,
 ) -> Result<(), Box<dyn Error>> {
     fs::create_dir_all(OUTPUT_DIR)?;
 
@@ -393,6 +395,7 @@ pub fn run_pipeline(
             );
             run_conda_qiime_command(env_name, &cutadapt_cmd)
         })?;
+
         run_step("Summarizing trimmed data", || {
             run_conda_qiime_command(env_name, &format!(
                 "demux summarize --i-data {} --p-n 100000 --o-visualization {}",
@@ -420,13 +423,13 @@ pub fn run_pipeline(
             run_conda_qiime_command(env_name, &format!(
                 "dada2 denoise-paired \
                  --i-demultiplexed-seqs {} \
-                 --p-n-threads 0 --p-trunc-q 2 --p-trunc-len-f 219 --p-trunc-len-r 194 \
+                 --p-n-threads 0 --p-trunc-q 2 --p-trunc-len-f {} --p-trunc-len-r {} \
                  --p-max-ee-f 2 --p-max-ee-r 4 --p-n-reads-learn 1000000 \
                  --p-chimera-method pooled \
                  --o-table {} \
                  --o-representative-sequences {} \
                  --o-denoising-stats {}",
-                pe_trimmed_qza, table_dada2_qza, rep_seqs_dada2_qza, stats_dada2_qza
+                pe_trimmed_qza, trunc_len_f, trunc_len_r, table_dada2_qza, rep_seqs_dada2_qza, stats_dada2_qza
             ))
         })?;
         run_step("Tabulating DADA2 denoising stats", || {

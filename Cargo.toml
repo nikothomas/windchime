@@ -24,7 +24,7 @@ bio = "2.0.3"
 flate2 = "1.0"
 
 # For config-file support (TOML, JSON, etc.)
-config = "0.13"
+config = "0.15"
 
 # For file, IO, and path operations
 reqwest = { version = "0.12.12", features = ["blocking"] }
