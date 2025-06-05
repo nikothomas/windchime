@@ -2586,7 +2586,7 @@ dependencies = [
 
 [[package]]
 name = "windchime"
-version = "0.0.5"
+version = "0.0.6"
 dependencies = [
  "bio",
  "chrono",
