@@ -120,8 +120,11 @@ windchime pipeline [OPTIONS]
   Number of CPU cores to use.  
   *Default:* `1`
 - `-t, --target <target>`  
-  Target region: either `16s` or `18s`.  
-  *Default:* `18s`
+  Target region: `16s`, `18sv4`, or `18sv9`.
+  - `16s`: bacterial 16S rRNA gene
+  - `18sv4`: eukaryotic 18S rRNA V4 region  
+  - `18sv9`: eukaryotic 18S rRNA V9 region (default)
+  *Default:* `18sv9`
 - `--skip-existing`  
   If set, skips any pipeline steps where expected output files already exist.
 - `--use-pretrained-classifier`  
@@ -176,7 +179,7 @@ windchime runall --env-name qiime2-amplicon-2024.10 \
                   --barcodes-file barcodes.tsv \
                   --manifest manifest.tsv \
                   --cores 4 \
-                  --target 18s \
+                  --target 18sv9 \
                   --skip-existing
 ```
 

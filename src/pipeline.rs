@@ -328,11 +328,17 @@ pub fn run_pipeline(
 
     // Adapter/primer sequences
     let (adapter_f, adapter_r, primer_f, primer_r) = match target.to_lowercase().as_str() {
-        "18s" => (
+        "18sv9" | "18s" => ( // Keep backward compatibility with "18s"
             "^TTGTACACACCGCCC...GTAGGTGAACCTGCRGAAGG",
             "^CCTTCYGCAGGTTCACCTAC...GGGCGGTGTGTACAA",
             "TTGTACACACCGCCC",
             "CCTTCYGCAGGTTCACCTAC",
+        ),
+        "18sv4" => (
+            "^CCAGCASCYGCGGTAATTCC...YRATCAAGAACGAAAGT",
+            "^ACTTTCGTTCTTGATYR...GGAATTACCGCRGSTGCTGG",
+            "CCAGCASCYGCGGTAATTCC",
+            "ACTTTCGTTCTTGATYR",
         ),
         "16s" => (
             "^GTGYCAGCMGCCGCGGTAA...AAACTYAAAKRAATTGRCGG",
@@ -341,7 +347,7 @@ pub fn run_pipeline(
             "CCGYCAATTYMTTTRAGTTT",
         ),
         other => {
-            print_error(&format!("Unsupported target: {}. Use '16s' or '18s'.", other));
+            print_error(&format!("Unsupported target: {}. Use '16s', '18sv4', or '18sv9'.", other));
             return Err("Unsupported target".into());
         }
     };
@@ -559,7 +565,8 @@ pub fn run_pipeline(
             run_step("Extracting pr2 reads", || {
                 // Use specific primers based on target
                 let (primer_f, primer_r) = match target.to_lowercase().as_str() {
-                    "18s" => ("TTGTACACACCGCCC", "CCTTCYGCAGGTTCACCTAC"),
+                    "18sv9" | "18s" => ("TTGTACACACCGCCC", "CCTTCYGCAGGTTCACCTAC"),
+                    "18sv4" => ("CCAGCASCYGCGGTAATTCC", "ACTTTCGTTCTTGATYR"),
                     "16s" => ("GTGYCAGCMGCCGCGGTAA", "CCGYCAATTYMTTTRAGTTT"),
                     _ => return Err("Invalid target region".into()),
                 };

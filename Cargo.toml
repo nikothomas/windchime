@@ -7,9 +7,6 @@ license = "MIT"
 repository = "https://github.com/nikothomas/windchime"
 authors = ["Nikolas Yanek-Chrones <research@icarai.io>"]
 
-[lib]
-name = "windchime"
-
 [dependencies]
 # Command-line argument parsing
 clap = { version = "4.3", features = ["derive"] }

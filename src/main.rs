@@ -66,8 +66,8 @@ enum Commands {
         #[arg(long, default_value_t = 1)]
         cores: usize,
 
-        /// Target region (16s or 18s).
-        #[arg(short, long, default_value = "18s")]
+        /// Target region (16s, 18sv4, or 18sv9).
+        #[arg(short, long, default_value = "18sv9")]
         target: String,
 
         /// Skip pipeline steps if expected outputs already exist.
@@ -95,8 +95,8 @@ enum Commands {
         #[arg(long, default_value_t = 1)]
         cores: usize,
 
-        /// Target region (16s or 18s).
-        #[arg(short, long, default_value = "18s")]
+        /// Target region (16s, 18sv4, or 18sv9).
+        #[arg(short, long, default_value = "18sv9")]
         target: String,
 
         /// Skip pipeline steps if expected outputs already exist.

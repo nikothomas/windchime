@@ -89,14 +89,14 @@ pub fn run_wizard() -> Result<(), Box<dyn Error>> {
             .parse()?;
 
         let target: String = Input::with_theme(&ColorfulTheme::default())
-            .with_prompt("Target region (16s/18s)")
-            .default("18s".into())
+            .with_prompt("Target region (16s/18sv4/18sv9)")
+            .default("18sv9".into())
             .validate_with(|input: &String| -> Result<(), &str> {
                 let lower = input.to_lowercase();
-                if lower == "16s" || lower == "18s" {
+                if lower == "16s" || lower == "18sv4" || lower == "18sv9" || lower == "18s" {
                     Ok(())
                 } else {
-                    Err("Must be '16s' or '18s'")
+                    Err("Must be '16s', '18sv4', or '18sv9' (or '18s' for backward compatibility with 18sv9)")
                 }
             })
             .interact_text()?;
