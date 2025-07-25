@@ -101,10 +101,17 @@ pub fn run_wizard() -> Result<(), Box<dyn Error>> {
             })
             .interact_text()?;
 
-        // Truncation lengths for DADA2
+        // Truncation lengths for DADA2 - set defaults based on target region
+        let (default_trunc_f, default_trunc_r) = match target.to_lowercase().as_str() {
+            "16s" => ("219", "194"),
+            "18sv4" => ("262", "223"),
+            "18sv9" | "18s" => ("123", "91"),
+            _ => ("219", "194"), // fallback to 16s defaults
+        };
+
         let trunc_len_f: usize = Input::with_theme(&ColorfulTheme::default())
             .with_prompt("Forward read trunc length for DADA2 (0 = no truncation)")
-            .default("219".into())
+            .default(default_trunc_f.into())
             .validate_with(|input: &String| -> Result<(), &str> {
                 match input.parse::<usize>() {
                     Ok(_) => Ok(()),
@@ -116,7 +123,7 @@ pub fn run_wizard() -> Result<(), Box<dyn Error>> {
 
         let trunc_len_r: usize = Input::with_theme(&ColorfulTheme::default())
             .with_prompt("Reverse read trunc length for DADA2 (0 = no truncation)")
-            .default("194".into())
+            .default(default_trunc_r.into())
             .validate_with(|input: &String| -> Result<(), &str> {
                 match input.parse::<usize>() {
                     Ok(_) => Ok(()),

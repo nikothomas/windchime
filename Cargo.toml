@@ -1,6 +1,6 @@
 [package]
 name = "windchime"
-version = "0.0.6"
+version = "0.0.7"
 edition = "2024"
 description = "Allen Lab QIIME2 pipeline"
 license = "MIT"
